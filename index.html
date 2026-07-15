@@ -2,132 +2,110 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🤖 MD5 BOT - TÀI XỈU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🎲 TÀI XỈU MD5</title>
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        body {
-            background: #0a0a0f;
-            height: 100vh;
+        
+        html, body {
+            width: 100%;
+            height: 100%;
             overflow: hidden;
             font-family: -apple-system, system-ui, sans-serif;
-            position: relative;
-            user-select: none;
-            -webkit-user-select: none;
+            background: #0a0a0f;
+            position: fixed;
+            top: 0;
+            left: 0;
         }
-        /* ===== IFRAME GAME ===== */
+        
+        /* === IFRAME GAME === */
         #gameFrame {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             border: none;
             z-index: 0;
             background: #000;
         }
-        /* ===== LOADING GAME ===== */
-        #gameLoading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            background: #0a0a0f;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255,255,255,0.2);
-            font-size: 14px;
-            transition: opacity 0.6s;
-            pointer-events: none;
-        }
-        #gameLoading .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.04);
-            border-top: 3px solid #af52de;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 16px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        #gameLoading.hide {
-            opacity: 0;
-        }
-        /* ===== CON BOT ===== */
+        
+        /* === CON BOT === */
         #bot {
             position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 999;
-            bottom: 30px;
-            right: 30px;
-            width: 400px;
-            max-width: 92vw;
-            background: rgba(12, 12, 28, 0.94);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-radius: 28px 28px 18px 18px;
-            border: 1px solid rgba(128, 0, 255, 0.12);
-            box-shadow: 0 12px 50px rgba(0,0,0,0.8), 0 0 60px rgba(128,0,255,0.04);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: bottom right;
+            width: 92%;
+            max-width: 420px;
+            background: rgba(10, 10, 20, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(128, 0, 255, 0.08);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+            transition: all 0.3s ease;
+            padding: 12px 14px 14px;
         }
+        
         #bot.collapsed {
-            transform: scale(0.85);
-            opacity: 0.7;
-            cursor: pointer;
+            transform: translateX(-50%) translateY(calc(100% - 40px));
+            opacity: 0.6;
         }
+        
         #bot.collapsed .bot-body {
             display: none;
         }
-        #bot.collapsed .bot-status-text {
-            display: none;
-        }
-        /* ===== HEADER BOT ===== */
+        
+        /* === HEADER === */
         .bot-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 16px 10px 16px;
+            gap: 8px;
             cursor: grab;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+            user-select: none;
+            -webkit-user-select: none;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
         }
+        
         .bot-header:active {
             cursor: grabbing;
         }
+        
         .bot-avatar {
-            font-size: 28px;
-            animation: float 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 12px rgba(128,0,255,0.15));
+            font-size: 22px;
             flex-shrink: 0;
+            animation: pulse 2s ease-in-out infinite;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-4px) rotate(4deg); }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
         }
+        
         .bot-info {
             flex: 1;
             min-width: 0;
         }
+        
         .bot-info .name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: #fff;
             letter-spacing: 0.3px;
         }
+        
         .bot-info .name .badge {
-            font-size: 8px;
+            font-size: 7px;
             background: linear-gradient(135deg, #ff2d55, #af52de);
-            padding: 1px 10px;
+            padding: 1px 8px;
             border-radius: 30px;
             margin-left: 4px;
             font-weight: 600;
@@ -135,96 +113,64 @@
             vertical-align: middle;
             color: #fff;
         }
+        
         .bot-info .status-text {
-            font-size: 10px;
-            color: rgba(255,255,255,0.25);
+            font-size: 9px;
+            color: rgba(255,255,255,0.2);
             margin-top: 1px;
             transition: 0.3s;
         }
+        
         .bot-info .status-text.online { color: #30d158; }
         .bot-info .status-text.offline { color: #ff453a; }
         .bot-info .status-text.loading { color: #5ac8fa; }
+        
         .bot-actions {
             display: flex;
-            gap: 4px;
+            gap: 2px;
             flex-shrink: 0;
         }
+        
         .bot-actions button {
             background: rgba(255,255,255,0.04);
             border: none;
-            color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.15);
             font-size: 14px;
             padding: 4px 8px;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
             line-height: 1;
         }
+        
         .bot-actions button:active {
-            background: rgba(255,45,85,0.12);
+            background: rgba(255,45,85,0.1);
             transform: scale(0.88);
         }
-        /* ===== BODY BOT ===== */
+        
+        /* === BODY === */
         .bot-body {
-            padding: 12px 16px 16px 16px;
+            margin-top: 8px;
             animation: fadeUp 0.25s ease;
         }
+        
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
         /* Row game */
         .row-game {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        .row-game input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            background: rgba(255,255,255,0.04);
-            color: #fff;
-            font-size: 12px;
-            font-family: monospace;
-            outline: none;
-            min-width: 0;
-        }
-        .row-game input::placeholder {
-            color: rgba(255,255,255,0.12);
-            font-family: system-ui;
-            font-size: 11px;
-        }
-        .row-game input:focus {
-            border-color: rgba(128, 0, 255, 0.2);
-        }
-        .btn-go {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #30d158, #34c759);
-            color: #fff;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-            white-space: nowrap;
-        }
-        .btn-go:active {
-            transform: scale(0.94);
-        }
-        /* Row MD5 */
-        .row-md5 {
             display: flex;
             gap: 6px;
             margin-bottom: 6px;
         }
-        .row-md5 input {
+        
+        .row-game input {
             flex: 1;
-            padding: 8px 12px;
+            padding: 7px 12px;
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
+            border-radius: 12px;
             background: rgba(255,255,255,0.04);
             color: #fff;
             font-size: 11px;
@@ -232,228 +178,288 @@
             outline: none;
             min-width: 0;
         }
-        .row-md5 input::placeholder {
+        
+        .row-game input::placeholder {
             color: rgba(255,255,255,0.1);
             font-family: system-ui;
             font-size: 10px;
         }
-        .row-md5 input:focus {
+        
+        .row-game input:focus {
             border-color: rgba(128, 0, 255, 0.2);
         }
-        .btn-paste {
-            padding: 8px 10px;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            background: rgba(255,255,255,0.04);
-            color: rgba(255,255,255,0.25);
-            font-size: 14px;
-            cursor: pointer;
-            min-width: 36px;
-            transition: 0.2s;
-        }
-        .btn-paste:active {
-            background: rgba(128,0,255,0.08);
-        }
-        .btn-analyze {
-            padding: 8px 18px;
+        
+        .btn-go {
+            padding: 7px 14px;
             border: none;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #ff2d55, #af52de);
+            border-radius: 12px;
+            background: linear-gradient(135deg, #30d158, #34c759);
             color: #fff;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             transition: 0.2s;
             white-space: nowrap;
         }
+        
+        .btn-go:active {
+            transform: scale(0.94);
+        }
+        
+        /* Row MD5 */
+        .row-md5 {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 4px;
+        }
+        
+        .row-md5 input {
+            flex: 1;
+            padding: 7px 10px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-size: 11px;
+            font-family: monospace;
+            outline: none;
+            min-width: 0;
+        }
+        
+        .row-md5 input::placeholder {
+            color: rgba(255,255,255,0.08);
+            font-family: system-ui;
+            font-size: 10px;
+        }
+        
+        .row-md5 input:focus {
+            border-color: rgba(128, 0, 255, 0.2);
+        }
+        
+        .btn-paste {
+            padding: 7px 9px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.2);
+            font-size: 13px;
+            cursor: pointer;
+            min-width: 32px;
+            transition: 0.2s;
+        }
+        
+        .btn-paste:active {
+            background: rgba(128,0,255,0.08);
+        }
+        
+        .btn-analyze {
+            padding: 7px 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ff2d55, #af52de);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        
         .btn-analyze:active {
             transform: scale(0.94);
         }
+        
         .btn-analyze:disabled {
             opacity: 0.3;
             transform: none;
         }
-        /* Row toggle */
-        .row-toggle {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 4px;
-            gap: 8px;
-        }
-        .btn-toggle-analyze {
-            padding: 4px 14px;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 30px;
-            background: transparent;
-            color: rgba(255,255,255,0.2);
-            font-size: 9px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            letter-spacing: 0.5px;
-        }
-        .btn-toggle-analyze:active {
-            transform: scale(0.92);
-        }
-        .btn-toggle-analyze.active {
-            background: rgba(255,45,85,0.1);
-            color: #ff2d55;
-            border-color: rgba(255,45,85,0.2);
-        }
-        /* ===== RESULT BOX ===== */
+        
+        /* === RESULT BOX (GỌN NHƯ ẢNH) === */
         .result-box {
-            margin-top: 10px;
-            padding: 12px 14px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.04);
+            margin-top: 8px;
+            padding: 10px 12px 8px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.03);
             display: none;
-            animation: fadeUp 0.3s ease;
         }
+        
         .result-box.show {
             display: block;
+            animation: fadeUp 0.3s ease;
         }
-        .result-box .pred {
-            text-align: center;
-            font-size: 20px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            padding: 2px 0;
-        }
-        .result-box .pred.tai { color: #30d158; }
-        .result-box .pred.xiu { color: #ff453a; }
-        .result-box .bars {
+        
+        .result-main {
             display: flex;
-            gap: 14px;
-            margin-top: 8px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
         }
-        .result-box .bar-item {
+        
+        .result-main .pred {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            min-width: 60px;
+        }
+        
+        .result-main .pred.tai { color: #30d158; }
+        .result-main .pred.xiu { color: #ff453a; }
+        
+        .result-main .bars {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .result-main .bar-item {
             flex: 1;
             text-align: center;
         }
-        .result-box .bar-item .lbl {
-            font-size: 8px;
-            color: rgba(255,255,255,0.2);
+        
+        .result-main .bar-item .lbl {
+            font-size: 7px;
+            color: rgba(255,255,255,0.15);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .result-box .bar-item .track {
-            height: 4px;
+        
+        .result-main .bar-item .track {
+            height: 3px;
             border-radius: 10px;
             background: rgba(255,255,255,0.05);
             overflow: hidden;
             margin-top: 2px;
         }
-        .result-box .bar-item .track .fill {
+        
+        .result-main .bar-item .track .fill {
             height: 100%;
             border-radius: 10px;
             transition: width 0.6s ease;
         }
-        .result-box .bar-item .track .fill.tai-fill { background: #30d158; }
-        .result-box .bar-item .track .fill.xiu-fill { background: #ff453a; }
-        .result-box .bar-item .pct {
-            font-size: 12px;
+        
+        .result-main .bar-item .track .fill.tai-fill { background: #30d158; }
+        .result-main .bar-item .track .fill.xiu-fill { background: #ff453a; }
+        
+        .result-main .bar-item .pct {
+            font-size: 11px;
             font-weight: 700;
             color: #fff;
-            margin-top: 2px;
+            margin-top: 1px;
         }
-        .result-box .mini-stats {
+        
+        .result-footer {
             display: flex;
             justify-content: space-around;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-            font-size: 9px;
-            color: rgba(255,255,255,0.2);
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            font-size: 8px;
+            color: rgba(255,255,255,0.15);
         }
-        .result-box .mini-stats strong {
-            color: rgba(255,255,255,0.45);
+        
+        .result-footer strong {
+            color: rgba(255,255,255,0.35);
             font-weight: 600;
         }
-        /* ===== NÚT TOGGLE BOT ===== */
+        
+        /* === NÚT TOGGLE === */
         #botToggle {
             position: fixed;
+            bottom: 20px;
+            right: 20px;
             z-index: 1000;
-            bottom: 30px;
-            right: 30px;
-            width: 52px;
-            height: 52px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: none;
             background: linear-gradient(135deg, #ff2d55, #af52de);
             color: #fff;
-            font-size: 26px;
+            font-size: 22px;
             cursor: pointer;
-            box-shadow: 0 6px 30px rgba(128,0,255,0.2);
+            box-shadow: 0 4px 20px rgba(128,0,255,0.15);
             transition: 0.3s;
             display: none;
             align-items: center;
             justify-content: center;
         }
+        
         #botToggle:active {
             transform: scale(0.88);
         }
+        
         #botToggle.show {
             display: flex;
         }
-        /* ===== RESPONSIVE ===== */
+        
+        /* === BOT LOADING GIẢ === */
+        .bot-loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 4px 0;
+            font-size: 9px;
+            color: rgba(255,255,255,0.15);
+        }
+        
+        .bot-loading.show {
+            display: flex;
+        }
+        
+        .bot-loading .spinner-mini {
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255,255,255,0.04);
+            border-top: 2px solid #af52de;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* === RESPONSIVE === */
+        @media (orientation: landscape) {
+            #bot {
+                max-width: 380px;
+                bottom: 15px;
+                padding: 10px 12px 12px;
+            }
+            .bot-avatar { font-size: 18px; }
+            .bot-info .name { font-size: 11px; }
+            .result-main .pred { font-size: 18px; min-width: 50px; }
+            .result-main .bar-item .pct { font-size: 10px; }
+        }
+        
         @media (max-width: 480px) {
             #bot {
-                width: 100%;
-                max-width: 100%;
-                bottom: 0;
-                right: 0;
-                border-radius: 20px 20px 0 0;
-                max-height: 80vh;
-                overflow-y: auto;
+                width: 96%;
+                padding: 10px 12px 12px;
             }
-            .bot-header {
-                padding: 10px 14px 8px 14px;
-            }
-            .bot-body {
-                padding: 8px 14px 14px 14px;
-            }
-            .row-game input, .row-md5 input {
-                font-size: 11px;
-                padding: 6px 10px;
-            }
-            .btn-go, .btn-analyze {
-                font-size: 11px;
-                padding: 6px 12px;
-            }
-            #botToggle {
-                width: 44px;
-                height: 44px;
-                font-size: 22px;
-                bottom: 16px;
-                right: 16px;
-            }
+            .result-main .pred { font-size: 18px; min-width: 50px; }
         }
-        /* ===== FOOTER WATERMARK ===== */
+        
+        /* === WATERMARK === */
         .watermark {
             position: fixed;
-            bottom: 10px;
+            bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 998;
-            font-size: 9px;
-            color: rgba(255,255,255,0.04);
+            z-index: 1;
+            font-size: 8px;
+            color: rgba(255,255,255,0.03);
             letter-spacing: 1px;
             pointer-events: none;
             text-align: center;
         }
         .watermark span {
-            color: rgba(255,45,85,0.08);
+            color: rgba(255,45,85,0.05);
         }
     </style>
 </head>
 <body>
-
-    <!-- ===== LOADING ===== -->
-    <div id="gameLoading">
-        <div class="spinner"></div>
-        <div>🔄 Đang tải game...</div>
-    </div>
 
     <!-- ===== IFRAME GAME ===== -->
     <iframe id="gameFrame" src="about:blank"></iframe>
@@ -464,7 +470,7 @@
             <span class="bot-avatar">🤖</span>
             <div class="bot-info">
                 <div class="name">
-                    MD5 BOT
+                    TÀI XỈU MD5
                     <span class="badge">@tpmodz</span>
                 </div>
                 <div class="status-text online" id="botStatusText">💚 Sẵn sàng</div>
@@ -477,35 +483,40 @@
 
         <div class="bot-body" id="botBody">
             <div class="row-game">
-                <input type="text" id="gameUrlInput" placeholder="🔗 Nhập link game (VD: play.max789.vin)">
+                <input type="text" id="gameUrlInput" placeholder="🔗 Link game (VD: play.max789.vin)">
                 <button class="btn-go" id="goBtn">🚀 VÀO</button>
             </div>
 
-            <div class="row-md5" id="md5Row" style="display:none;">
+            <div class="row-md5" id="md5Row">
                 <input type="text" id="md5Input" placeholder="🔑 Nhập MD5 32 ký tự">
                 <button class="btn-paste" id="pasteBtn">📋</button>
                 <button class="btn-analyze" id="analyzeBtn">🔮 PHÂN TÍCH</button>
             </div>
 
-            <div class="row-toggle">
-                <button class="btn-toggle-analyze" id="toggleAnalyzeBtn">🔇 TẮT PHÂN TÍCH</button>
+            <!-- BOT LOADING GIẢ -->
+            <div class="bot-loading" id="botLoading">
+                <div class="spinner-mini"></div>
+                <span id="loadingText">Đang phân tích MD5...</span>
             </div>
 
+            <!-- RESULT -->
             <div class="result-box" id="resultBox">
-                <div class="pred" id="predText">TÀI</div>
-                <div class="bars">
-                    <div class="bar-item">
-                        <div class="lbl">TÀI</div>
-                        <div class="track"><div class="fill tai-fill" id="taiBar" style="width:0%"></div></div>
-                        <div class="pct" id="taiPct">0%</div>
-                    </div>
-                    <div class="bar-item">
-                        <div class="lbl">XỈU</div>
-                        <div class="track"><div class="fill xiu-fill" id="xiuBar" style="width:0%"></div></div>
-                        <div class="pct" id="xiuPct">0%</div>
+                <div class="result-main">
+                    <div class="pred" id="predText">TÀI</div>
+                    <div class="bars">
+                        <div class="bar-item">
+                            <div class="lbl">TÀI</div>
+                            <div class="track"><div class="fill tai-fill" id="taiBar" style="width:0%"></div></div>
+                            <div class="pct" id="taiPct">0%</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="lbl">XỈU</div>
+                            <div class="track"><div class="fill xiu-fill" id="xiuBar" style="width:0%"></div></div>
+                            <div class="pct" id="xiuPct">0%</div>
+                        </div>
                     </div>
                 </div>
-                <div class="mini-stats">
+                <div class="result-footer">
                     <span>Bit 1: <strong id="bits">0%</strong></span>
                     <span>Entropy: <strong id="entropy">0</strong></span>
                     <span>Số cuối: <strong id="lastDigit">0</strong></span>
@@ -588,19 +599,18 @@
         const botHeader = document.getElementById('botHeader');
         const botBody = document.getElementById('botBody');
         const botStatusText = document.getElementById('botStatusText');
+        const botLoading = document.getElementById('botLoading');
+        const loadingText = document.getElementById('loadingText');
         const collapseBtn = document.getElementById('collapseBtn');
         const closeBtn = document.getElementById('closeBtn');
         const botToggle = document.getElementById('botToggle');
         const gameFrame = document.getElementById('gameFrame');
-        const gameLoading = document.getElementById('gameLoading');
 
         const gameUrlInput = document.getElementById('gameUrlInput');
         const goBtn = document.getElementById('goBtn');
-        const md5Row = document.getElementById('md5Row');
         const md5Input = document.getElementById('md5Input');
         const pasteBtn = document.getElementById('pasteBtn');
         const analyzeBtn = document.getElementById('analyzeBtn');
-        const toggleAnalyzeBtn = document.getElementById('toggleAnalyzeBtn');
 
         const resultBox = document.getElementById('resultBox');
         const predText = document.getElementById('predText');
@@ -612,7 +622,6 @@
         const entropy = document.getElementById('entropy');
         const lastDigit = document.getElementById('lastDigit');
 
-        let analyzeEnabled = true;
         let isCollapsed = false;
 
         // ============================================================
@@ -622,6 +631,15 @@
             botStatusText.textContent = text;
             botStatusText.className = 'status-text';
             if (type) botStatusText.classList.add(type);
+        }
+
+        function showLoading(text) {
+            botLoading.classList.add('show');
+            loadingText.textContent = text || 'Đang phân tích MD5...';
+        }
+
+        function hideLoading() {
+            botLoading.classList.remove('show');
         }
 
         function showResult(r) {
@@ -638,20 +656,21 @@
         }
 
         function doPredict() {
-            if (!analyzeEnabled) {
-                setStatus('🔇 Phân tích đã tắt', 'offline');
-                return;
-            }
             const hash = md5Input.value.trim();
             if (!hash) {
                 setStatus('⚠️ Nhập MD5 hoặc SHA-256', 'offline');
                 return;
             }
-            setStatus('⏳ Đang phân tích...', 'loading');
+            
+            // Hiệu ứng loading
+            showLoading('🔮 Đang phân tích...');
+            setStatus('⏳ Đang xử lý...', 'loading');
             analyzeBtn.disabled = true;
 
+            // Giả lập load 1.5s cho xịn
             setTimeout(() => {
                 const r = analyzeMD5(hash);
+                hideLoading();
                 if (r.error) {
                     setStatus('❌ ' + r.error, 'offline');
                     analyzeBtn.disabled = false;
@@ -660,7 +679,7 @@
                 showResult(r);
                 setStatus('✅ Dự đoán: ' + r.result + ' (' + r.confidence + ')', 'online');
                 analyzeBtn.disabled = false;
-            }, 300);
+            }, 1500);
         }
 
         // ============================================================
@@ -677,15 +696,8 @@
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
                 url = 'https://' + url;
             }
-            gameLoading.classList.remove('hide');
             gameFrame.src = url;
-            md5Row.style.display = 'flex';
-            setStatus('🌐 Đã tải game. Nhập MD5 để phân tích.', 'online');
-
-            // Ẩn loading sau 2s
-            setTimeout(() => {
-                gameLoading.classList.add('hide');
-            }, 2000);
+            setStatus('🌐 Đã tải game', 'online');
         });
 
         gameUrlInput.addEventListener('keydown', function(e) {
@@ -705,23 +717,12 @@
                 if (text && /^[a-fA-F0-9]{32,64}$/.test(text.trim())) {
                     md5Input.value = text.trim();
                     setStatus('📋 Đã dán MD5', 'online');
-                    setTimeout(doPredict, 400);
+                    setTimeout(doPredict, 500);
                 } else {
                     setStatus('⚠️ Clipboard không có MD5 hợp lệ', 'offline');
                 }
             } catch {
                 setStatus('⚠️ Không đọc được clipboard', 'offline');
-            }
-        });
-
-        // BẬT/TẮT PHÂN TÍCH
-        toggleAnalyzeBtn.addEventListener('click', function() {
-            analyzeEnabled = !analyzeEnabled;
-            this.textContent = analyzeEnabled ? '🔇 TẮT PHÂN TÍCH' : '🔊 BẬT PHÂN TÍCH';
-            this.classList.toggle('active');
-            setStatus(analyzeEnabled ? '✅ Phân tích đã bật' : '🔇 Phân tích đã tắt', analyzeEnabled ? 'online' : 'offline');
-            if (!analyzeEnabled) {
-                resultBox.classList.remove('show');
             }
         });
 
@@ -759,10 +760,11 @@
         });
 
         // ============================================================
-        // 5. KÉO THẢ BOT
+        // 5. KÉO THẢ BOT - TỐI ƯU CHO CẢ LANDSCAPE
         // ============================================================
         let isDragging = false;
         let dragOffX = 0, dragOffY = 0;
+        let dragStartX = 0, dragStartY = 0;
 
         botHeader.addEventListener('mousedown', function(e) {
             if (e.target.closest('button')) return;
@@ -770,6 +772,8 @@
             const rect = bot.getBoundingClientRect();
             dragOffX = e.clientX - rect.left;
             dragOffY = e.clientY - rect.top;
+            dragStartX = rect.left;
+            dragStartY = rect.top;
             bot.style.left = rect.left + 'px';
             bot.style.top = rect.top + 'px';
             bot.style.right = 'auto';
@@ -783,10 +787,13 @@
             if (!isDragging) return;
             let x = e.clientX - dragOffX;
             let y = e.clientY - dragOffY;
-            x = Math.max(0, Math.min(x, window.innerWidth - bot.offsetWidth));
-            y = Math.max(0, Math.min(y, window.innerHeight - bot.offsetHeight));
+            const maxX = window.innerWidth - bot.offsetWidth - 10;
+            const maxY = window.innerHeight - bot.offsetHeight - 10;
+            x = Math.max(10, Math.min(x, maxX));
+            y = Math.max(10, Math.min(y, maxY));
             bot.style.left = x + 'px';
             bot.style.top = y + 'px';
+            bot.style.transform = 'none';
         });
 
         document.addEventListener('mouseup', function() {
@@ -821,10 +828,13 @@
             if (!touch) return;
             let x = touch.clientX - dragOffX;
             let y = touch.clientY - dragOffY;
-            x = Math.max(0, Math.min(x, window.innerWidth - bot.offsetWidth));
-            y = Math.max(0, Math.min(y, window.innerHeight - bot.offsetHeight));
+            const maxX = window.innerWidth - bot.offsetWidth - 10;
+            const maxY = window.innerHeight - bot.offsetHeight - 10;
+            x = Math.max(10, Math.min(x, maxX));
+            y = Math.max(10, Math.min(y, maxY));
             bot.style.left = x + 'px';
             bot.style.top = y + 'px';
+            bot.style.transform = 'none';
             e.preventDefault();
         }, { passive: false });
 
@@ -833,11 +843,49 @@
         });
 
         // ============================================================
-        // 6. KHỞI TẠO
+        // 6. XỬ LÝ XOAY MÀN HÌNH - KHÔNG BỊ ẨN
+        // ============================================================
+        function handleOrientationChange() {
+            // Đảm bảo bot không bị trôi ra ngoài
+            const rect = bot.getBoundingClientRect();
+            const maxX = window.innerWidth - bot.offsetWidth - 10;
+            const maxY = window.innerHeight - bot.offsetHeight - 10;
+            
+            if (rect.left > maxX || rect.top > maxY || rect.left < 0 || rect.top < 0) {
+                // Nếu bot bị trôi, đưa về vị trí an toàn
+                bot.style.left = Math.min(Math.max(rect.left, 10), maxX) + 'px';
+                bot.style.top = Math.min(Math.max(rect.top, 10), maxY) + 'px';
+                bot.style.transform = 'none';
+            }
+            
+            // Điều chỉnh kích thước font cho landscape
+            if (window.innerWidth > window.innerHeight) {
+                // Landscape
+                document.documentElement.style.fontSize = '14px';
+            } else {
+                // Portrait
+                document.documentElement.style.fontSize = '16px';
+            }
+        }
+
+        // Lắng nghe sự kiện xoay màn hình
+        window.addEventListener('orientationchange', function() {
+            setTimeout(handleOrientationChange, 300);
+        });
+
+        window.addEventListener('resize', function() {
+            setTimeout(handleOrientationChange, 200);
+        });
+
+        // ============================================================
+        // 7. KHỞI TẠO
         // ============================================================
         setStatus('💡 Nhập link game → VÀO → nhập MD5 → PHÂN TÍCH', 'online');
-        console.log('🤖 MD5 BOT - @tpmodz');
+        handleOrientationChange();
+        
+        console.log('🤖 MD5 BOT v5.0 - @tpmodz');
         console.log('💀 DEVILS WILL RISE');
     </script>
+
 </body>
 </html>
